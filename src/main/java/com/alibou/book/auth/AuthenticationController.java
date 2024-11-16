@@ -3,6 +3,8 @@ package com.alibou.book.auth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,11 @@ public class AuthenticationController {
             return new ResponseEntity<>("Ein fehler aufgetreten",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<AuthenticationResponse> login (@Valid @RequestBody AuthenticationRequest request) {
+        return new ResponseEntity<>(authService.authenticate(request), HttpStatus.OK);
     }
 
 

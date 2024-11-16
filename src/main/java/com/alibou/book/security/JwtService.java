@@ -23,7 +23,7 @@ public class JwtService {
 //    @Value("${application.jwtExpiration}")
     private long jwtExpiration = 8640000;
 //    @Value("${application.secretKey}")
-    private String secretKey = "RadheRadhe";
+    private String secretKey = "wGzSuB2z5tXcu10B3xSD9kNKpk3jDI5LwGzSuB2z5tXcu10B3xSD9kNKpk3jDI5L";
 
     public String generateToken (UserDetails userDetails) {
         return generateToken (new HashMap<>(), userDetails);
@@ -47,7 +47,7 @@ public class JwtService {
                 .getBody();
     }
 
-    private String generateToken (HashMap<String, Object> claims, UserDetails userDetails) {
+    public String generateToken (HashMap<String, Object> claims, UserDetails userDetails) {
         return buildToken(claims, userDetails, jwtExpiration);
     }
 

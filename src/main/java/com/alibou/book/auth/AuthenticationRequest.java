@@ -1,6 +1,5 @@
 package com.alibou.book.auth;
 
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,17 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class RegisterRequest {
+public class AuthenticationRequest {
 
-    @NotEmpty(message = "Vorname darf nicht leer sein")
-    @NotBlank(message = "Vorname darf nicht leer sein")
-    private String firstname;
-
-    @NotEmpty(message = "Vorname darf nicht leer sein")
-    @NotBlank(message = "Vorname darf nicht leer sein")
-    private String lastname;
-
-    @Email
+    @Email(message = "Email muss gültig sein")
     @NotEmpty(message = "Vorname darf nicht leer sein")
     @NotBlank(message = "Vorname darf nicht leer sein")
     private String email;
@@ -31,4 +22,5 @@ public class RegisterRequest {
     @NotEmpty(message = "Vorname darf nicht leer sein")
     @NotBlank(message = "Vorname darf nicht leer sein")
     private String password;
+
 }

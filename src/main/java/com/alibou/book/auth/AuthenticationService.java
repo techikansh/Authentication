@@ -2,11 +2,19 @@ package com.alibou.book.auth;
 
 import com.alibou.book.email.EmailService;
 import com.alibou.book.role.RoleRepository;
+import com.alibou.book.security.JwtService;
 import com.alibou.book.user.User;
 import com.alibou.book.user.UserRepository;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -16,6 +24,9 @@ public class AuthenticationService {
     private final RoleRepository roleRepo;
     private final UserRepository userRepo;
     private final EmailService emailService;
+    private final AuthenticationManager authManager;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     public void register(RegisterRequest request) throws Exception {
 
@@ -27,7 +38,7 @@ public class AuthenticationService {
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .email(request.getEmail())
-                    .password(request.getPassword())
+                    .password(passwordEncoder.encode(request.getPassword()))
                     .accountLocked(false)
                     .enabled(true)
                     .roles(List.of(userRole))
@@ -43,5 +54,25 @@ public class AuthenticationService {
             System.out.println(e);
         }
 
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        var auth = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    request.getEmail(),
+                    request.getPassword()
+                )
+        );
+
+        var claims = new HashMap<String, Object>();
+        var user = (User) auth.getPrincipal();
+        claims.put("fullname", user.getFullname());
+        var jwtToken = jwtService.generateToken(claims, user);
+
+        return AuthenticationResponse.builder()
+            .success(true)
+            .token(jwtToken)
+            .build();
+        
     }
 }
