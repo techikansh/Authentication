@@ -18,17 +18,17 @@ public class RegisterRequest {
     @NotBlank(message = "Vorname darf nicht leer sein")
     private String firstname;
 
-    @NotEmpty(message = "Vorname darf nicht leer sein")
-    @NotBlank(message = "Vorname darf nicht leer sein")
+    @NotEmpty(message = "Nachname darf nicht leer sein")
+    @NotBlank(message = "Nachname darf nicht leer sein")
     private String lastname;
 
     @Email
-    @NotEmpty(message = "Vorname darf nicht leer sein")
-    @NotBlank(message = "Vorname darf nicht leer sein")
+    @NotEmpty(message = "Email darf nicht leer sein")
+    @NotBlank(message = "Email darf nicht leer sein")
     private String email;
 
-    @Size(min=6, message="Mindestans 6 zeichen erforderlich!")
-    @NotEmpty(message = "Vorname darf nicht leer sein")
-    @NotBlank(message = "Vorname darf nicht leer sein")
+    @Size(min = 6, message = "Mindestans 6 zeichen erforderlich!")
+    @NotEmpty(message = "Passwort darf nicht leer sein")
+    @NotBlank(message = "Passwort darf nicht leer sein")
     private String password;
 }

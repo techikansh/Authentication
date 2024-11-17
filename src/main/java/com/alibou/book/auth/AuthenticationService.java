@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,33 +47,37 @@ public class AuthenticationService {
 
             userRepo.save(user);
             String subject = "Willkomen bei der Application!";
-            String body = String.format("Hallo %s,\n\nVielen Dank für Ihre Registrierung bei der Webseite.\n\nBeste Grüße,\nDas Team",
+            String body = String.format(
+                    "Hallo %s,\n\nVielen Dank für Ihre Registrierung bei der Webseite.\n\nBeste Grüße,\nDas Team",
                     user.getFirstname());
             emailService.sendEMail(user.getEmail(), subject, body);
 
-        }catch (Exception e) {
-            System.out.println(e);
+        } catch (Exception e) {
+            throw new Exception("Fehler beim Registrieren des Users");
         }
 
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var auth = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-                )
-        );
 
-        var claims = new HashMap<String, Object>();
-        var user = (User) auth.getPrincipal();
-        claims.put("fullname", user.getFullname());
-        var jwtToken = jwtService.generateToken(claims, user);
+        try {
+            var auth = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()));
 
-        return AuthenticationResponse.builder()
-            .success(true)
-            .token(jwtToken)
-            .build();
-        
+            var claims = new HashMap<String, Object>();
+            var user = (User) auth.getPrincipal();
+            claims.put("fullname", user.getFullname());
+            var jwtToken = jwtService.generateToken(claims, user);
+
+            return AuthenticationResponse.builder()
+                    .success(true)
+                    .token(jwtToken)
+                    .build();
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Ungültige Anmeldedaten");
+        }
+
     }
 }
